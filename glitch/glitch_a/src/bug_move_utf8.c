@@ -5,14 +5,14 @@
 #include <time.h>
 #include <wchar.h>
 
-// === PARAMÈTRES DU BUG ===
-#define BUG_PERCENTAGE         20       // % de mots à buguer
-#define BUG_MOVE_DURATION      0.001f     // Durée du bug (secondes)
-#define BUG_MOVE_RANGE_X       2        // Décalage max horizontal en pixels
+// === PARAMÃTRES DU BUG ===
+#define BUG_PERCENTAGE         20       // % de mots Ã  buguer
+#define BUG_MOVE_DURATION      0.001f     // DurÃ©e du bug (secondes)
+#define BUG_MOVE_RANGE_X       2        // DÃ©calage max horizontal en pixels
 #define BUG_MOVE_RANGE_Y       2
 Color COLOR_BUG = (Color){211, 211, 211, 255};
 
-// === PARAMÈTRES DE MISE EN PAGE ===
+// === PARAMÃTRES DE MISE EN PAGE ===
 #define LINE_HEIGHT            40       // Hauteur entre les lignes
 #define FONT_SIZE              30       // Taille du texte
 #define WORD_SPACING           10       // Espace entre les mots
@@ -37,24 +37,24 @@ typedef struct {
 WordMoveInfo movedWords[MAX_MOVED_WORDS];
 int movedWordsCount = 0;
 
-// Fonction pour remplacer les caractères spéciaux avec `wchar_t`
+// Fonction pour remplacer les caractÃ¨res spÃ©ciaux avec `wchar_t`
 void replaceSpecialCharsWithUnicode(wchar_t *str) {
-    // On parcourt chaque caractère de la chaîne wide
+    // On parcourt chaque caractÃ¨re de la chaÃ®ne wide
     for (int i = 0; str[i] != L'\0'; i++) {
-        // Si un caractère spécial est rencontré, on peut le remplacer
+        // Si un caractÃ¨re spÃ©cial est rencontrÃ©, on peut le remplacer
         switch (str[i]) {
-            case L'é': str[i] = L'é'; break; // Affichage direct en wide char
-            case L'è': str[i] = L'è'; break;
-            case L'à': str[i] = L'à'; break;
-            case L'ç': str[i] = L'ç'; break;
-            case L'ù': str[i] = L'ù'; break;
+            case L'Ã©': str[i] = L'Ã©'; break; // Affichage direct en wide char
+            case L'Ã¨': str[i] = L'Ã¨'; break;
+            case L'Ã ': str[i] = L'Ã '; break;
+            case L'Ã§': str[i] = L'Ã§'; break;
+            case L'Ã¹': str[i] = L'Ã¹'; break;
             case L'\'': str[i] = L'\''; break; // Apostrophe
             default: break;
         }
     }
 }
 
-// Fonction LoadTextFile modifiée
+// Fonction LoadTextFile modifiÃ©e
 void LoadTextFile(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -66,14 +66,14 @@ void LoadTextFile(const char *filename) {
     while (fgetws(buffer, MAX_LINE_LENGTH, file)) {
         if (lineCount >= MAX_LINES) break;
 
-        // Remplacer les caractères spéciaux
+        // Remplacer les caractÃ¨res spÃ©ciaux
         replaceSpecialCharsWithUnicode(buffer);
 
-        wprintf(L"Ligne lue après remplacement : %ls", buffer);
+        wprintf(L"Ligne lue aprÃ¨s remplacement : %ls", buffer);
 
-        lines[lineCount] = strdup((char *)buffer); // Conversion en char* si nécessaire
+        lines[lineCount] = strdup((char *)buffer); // Conversion en char* si nÃ©cessaire
         if (!lines[lineCount]) {
-            printf("Erreur d'allocation mémoire\n");
+            printf("Erreur d'allocation mÃ©moire\n");
             exit(1);
         }
         lineCount++;
