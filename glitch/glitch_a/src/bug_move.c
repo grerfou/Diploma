@@ -7,19 +7,20 @@
 
 // === PARAMÈTRES DU BUG ===
 #define BUG_PERCENTAGE         20       // % de mots à buguer
-#define BUG_MOVE_DURATION      0.001f     // Durée du bug (secondes)
+#define BUG_MOVE_DURATION      0.0001f     // Durée du bug (secondes)
 #define BUG_MOVE_RANGE_X       2        // Décalage max horizontal en pixels
 #define BUG_MOVE_RANGE_Y       2
 Color COLOR_BUG = (Color){211, 211, 211, 255};
-
 // === PARAMÈTRES DE MISE EN PAGE ===
 #define LINE_HEIGHT            40       // Hauteur entre les lignes
 #define FONT_SIZE              30       // Taille du texte
 #define WORD_SPACING           10       // Espace entre les mots
-#define TEXT_MARGIN_LEFT       500       // Marge gauche
+#define TEXT_MARGIN_LEFT       500      // Marge gauche
 #define TEXT_MARGIN_TOP        0
 #define SCREEN_WIDTH           400
 Color COLOR_TEXT = (Color){255, 255, 255, 255};
+
+
 
 char *lines[MAX_LINES];
 int lineCount = 0;
@@ -37,24 +38,7 @@ typedef struct {
 WordMoveInfo movedWords[MAX_MOVED_WORDS];
 int movedWordsCount = 0;
 
-// Fonction pour remplacer les caractères spéciaux avec `wchar_t`
-void replaceSpecialCharsWithUnicode(wchar_t *str) {
-    // On parcourt chaque caractère de la chaîne wide
-    for (int i = 0; str[i] != L'\0'; i++) {
-        // Si un caractère spécial est rencontré, on peut le remplacer
-        switch (str[i]) {
-            case L'é': str[i] = L'é'; break; // Affichage direct en wide char
-            case L'è': str[i] = L'è'; break;
-            case L'à': str[i] = L'à'; break;
-            case L'ç': str[i] = L'ç'; break;
-            case L'ù': str[i] = L'ù'; break;
-            case L'\'': str[i] = L'\''; break; // Apostrophe
-            default: break;
-        }
-    }
-}
 
-// Fonction LoadTextFile modifiée
 void LoadTextFile(const char *filename) {
     FILE *file = fopen(filename, "r");
     if (!file) {
@@ -62,16 +46,14 @@ void LoadTextFile(const char *filename) {
         exit(1);
     }
 
-    wchar_t buffer[MAX_LINE_LENGTH];
-    while (fgetws(buffer, MAX_LINE_LENGTH, file)) {
+    char buffer[MAX_LINE_LENGTH];
+    while (fgets(buffer, MAX_LINE_LENGTH, file)) {
         if (lineCount >= MAX_LINES) break;
 
-        // Remplacer les caractères spéciaux
-        replaceSpecialCharsWithUnicode(buffer);
+        // Affichage du contenu pour déboguer
+        printf("Ligne lue: %s", buffer);
 
-        wprintf(L"Ligne lue après remplacement : %ls", buffer);
-
-        lines[lineCount] = strdup((char *)buffer); // Conversion en char* si nécessaire
+        lines[lineCount] = strdup(buffer);
         if (!lines[lineCount]) {
             printf("Erreur d'allocation mémoire\n");
             exit(1);
