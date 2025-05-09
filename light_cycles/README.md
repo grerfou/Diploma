@@ -25,6 +25,6 @@ Chaque valeur est diviser par 3 pour avoir 3 phase dans ce lapse de temps :
 - Retravailler les couleur. 
 - Voir si j'auitomatise le programme pour que chaque cycle fasse soit :  
   
-   1. 5min si 25min/ 8min si 40min  
-   2. Je relie a une "machine" qui permet de changer les cycles manuellement 
+   - 5min si 25min/ 8min si 40min  
+   - Je relie a une "machine" qui permet de changer les cycles manuellement 
 

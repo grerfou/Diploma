@@ -1,6 +1,8 @@
 #include "raylib.h"
 #include "titan_tube.h"
 #include <math.h>
+//#include <dmtx.h>
+
 
 #define NUM_TUBES 8
 
@@ -12,7 +14,7 @@ void clear_tube_cues(TitanTube *tubes, int count) {
 }
 
 int main(void) {
-    const int screenWidth = 1800;
+    const int screenWidth = 1300;
     const int screenHeight = 300;
 
     InitWindow(screenWidth, screenHeight, "TitanTube Cycles");
