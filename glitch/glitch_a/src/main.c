@@ -1,6 +1,8 @@
 #include "raylib.h"
+#include "text_loader.h"
 #include "bug_move.h"
-#include "encre.h"
+#include "bug_stub.h"
+#include "vhs_glitch.h"
 #include <stdlib.h>
 #include <stdio.h>
 #include <time.h>
@@ -9,7 +11,8 @@
 
 typedef enum {
     BUG_GLITCH,
-    BUG_INK,
+    BUG_STUB, // à remplacer plus tard
+    VHS_GLITCH,
     BUG_COUNT
 } BugType;
 
@@ -17,33 +20,31 @@ int main(void) {
     InitWindow(1920, 1000, "Bug de texte");
     SetTargetFPS(60);
 
-    Font font = LoadFontEx("assets/LiberationMono.ttf", FONT_SIZE, NULL, 0);
+    Font font = LoadFontEx("assets/LiberationMono.ttf", FONT_SIZE, NULL, 8200);
     if (!font.texture.id) {
         printf("Erreur : impossible de charger la police.\n");
         return 1;
     }
 
-    LoadTextFile("assets/text.txt");
+    LoadTextFromFile("assets/text.txt");
     srand(time(NULL));
 
     float scrollOffset = 0;
     float scrollSpeed = 10;
 
-    float BugInterval = 1.0f;
-    float BugTimer = 0.0f;
-
     BugType currentBug = BUG_GLITCH;
+    float bugTimer = 0.0f;
+    float bugInterval = 1.0f;
 
-    InitInkBug(); // Initialise l'encre au cas où
+    InitGlitchBug();
+    InitStubBug(); 
+    InitVHSGlitch();
 
     while (!WindowShouldClose()) {
         float delta = GetFrameTime();
 
         if (IsKeyPressed(KEY_SPACE)) {
             currentBug = (currentBug + 1) % BUG_COUNT;
-            if (currentBug == BUG_INK) {
-                InitInkBug();
-            }
         }
 
         scrollOffset -= scrollSpeed * delta;
@@ -52,21 +53,24 @@ int main(void) {
 
         switch (currentBug) {
             case BUG_GLITCH:
-                BugTimer += delta;
-                if (BugTimer >= BugInterval) {
-                    ChooseWordsToMove(20);
-                    BugTimer = 0.0f;
+                bugTimer += delta;
+                if (bugTimer >= bugInterval) {
+                    //ChooseWordsToMove(20);
+                    ChooseLettersToMove(20);
+                    bugTimer = 0.0f;
                 }
-                UpdateMovedWords(delta);
+                UpdateGlitchBug(delta);
                 break;
 
-            case BUG_INK:
-                UpdateInkBug(delta);
+            case VHS_GLITCH: 
+                UpdateVHSGlitch(delta);
                 break;
 
-            case BUG_COUNT:
-                // rien à faire
+            case BUG_STUB:
+                UpdateStubBug(delta);
                 break;
+
+            default: break;
         }
 
         BeginDrawing();
@@ -74,15 +78,21 @@ int main(void) {
 
         switch (currentBug) {
             case BUG_GLITCH:
-                DrawTextWithBug(font, delta, scrollOffset);
+                NoteGlitch(font, scrollOffset);
+                DrawGlitchBug(font, scrollOffset);
+                break;
+            
+            case VHS_GLITCH:
+                NoteVHS (font, scrollOffset);
+                DrawVHSGlitch(font, delta, scrollOffset);
                 break;
 
-            case BUG_INK:
-                DrawTextWithInk(font, scrollOffset);
+            case BUG_STUB:
+                NoteStub(font, scrollOffset);
+                DrawStubBug(font, delta, scrollOffset);
                 break;
 
-            case BUG_COUNT:
-                break;
+            default: break;
         }
 
         EndDrawing();

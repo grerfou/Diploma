@@ -6,7 +6,7 @@ SRC_DIR = src
 ASSETS_DIR = assets
 BIN = main
 
-SRC = $(SRC_DIR)/main.c $(SRC_DIR)/bug_move.c $(SRC_DIR)/encre.c
+SRC = $(SRC_DIR)/main.c $(SRC_DIR)/bug_move.c $(SRC_DIR)/text_loader.c $(SRC_DIR)/bug_stub.c $(SRC_DIR)/vhs_glitch.c 
 
 all: $(BIN)
 

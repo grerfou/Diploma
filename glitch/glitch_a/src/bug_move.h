@@ -1,5 +1,5 @@
-#ifndef BUG_MOVE_H
-#define BUG_MOVE_H
+#ifndef BUG_GLITCH_H
+#define BUG_GLITCH_H
 
 #include "raylib.h"
 
@@ -8,13 +8,14 @@
 #define MAX_MOVED_WORDS 100
 #define LINE_HEIGHT 40
 
-extern char *lines[MAX_LINES];
-extern int lineCount;
+//extern char *lines[MAX_LINES];
+//extern int lineCount;
 
-void LoadTextFile(const char *filename);
-void ChooseWordsToMove(int percentage);
-void UpdateMovedWords(float deltaTime);
-void DrawTextWithBug(Font font, float deltaTime, float scrollOffset);
+void InitGlitchBug(void);
+void NoteGlitch(Font font, float scrollOffset);
+void ChooseLettersToMove(int percentage);
+void UpdateGlitchBug(float deltaTime);
+void DrawGlitchBug(Font font, float scrollOffset);
 
 #endif
 
