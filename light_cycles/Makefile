@@ -1,6 +1,7 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O2
-LDFLAGS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+C = gcc
+CFLAGS = -Wall -Wextra -std=c99 -O2 -I raylib/include -L raylib/lib
+#LDFLAGS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
+LDFLAGS = -lraylib -lm
 
 SRC_DIR = src
 OBJ_DIR = obj
