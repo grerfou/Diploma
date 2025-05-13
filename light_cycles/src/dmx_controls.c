@@ -30,17 +30,24 @@ struct RootPar6Packet {
 void send_dmx_data(serialib *serial, TitanTube *tubes, size_t num_tubes) {
   RootPar6Packet packet;
   size_t current_tube = 0;
-  // packet.data[0] = 0; // First dmw byte should always be 0 (RDM)
-  for (size_t i = 1; i < (1+num_tubes) * 4; i+=4) {
+  packet.data[0] = 0; // First dmx byte should always be 0 (RDM)
+  for (size_t i = 1; i < num_tubes * 4; i+=4) {
     packet.data[i + 0] = tubes[current_tube].color.r; // Canal 1 - Rouge
     packet.data[i + 1] = tubes[current_tube].color.g; // Canal 2 - Vert
     packet.data[i + 2] = tubes[current_tube].color.b; // Canal 3 - Bleu
     packet.data[i + 3] = 0; // tubes[current_tube].color.r; // Canal 4 - White
     printf("%zu : %d, %d, %d \n", current_tube, packet.data[i], packet.data[i+1], packet.data[i+2]);
-    // printf("%zu \n",  4 + i);
     current_tube++;
   }
   packet.size = num_tubes * 4;
+  printf("%d \n",  packet.size);
+
+  uint8_t buff[sizeof(packet)];
+  memcpy(buff, &packet, sizeof(packet));
+
+  for(int i = 0 ; i < sizeof(packet) ; i++){
+    printf("%d\n", buff[i]);
+  }
 
   // Envoi des données DMX
   serial->writeBytes((unsigned char*)&packet, sizeof(packet));
