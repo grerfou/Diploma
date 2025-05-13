@@ -5,7 +5,8 @@
 
 #include "serialib.h"
 
-#define DMX_CHANNELS 25
+#define NUM_TUBES 1
+#define MAX_CHANNEL (NUM_TUBES * 4) + 1
 
 int open_dmx_port(serialib *serial, const char *port);
 //int init_dmx(serialib *serial, const char *port_name);

@@ -13,22 +13,21 @@ int open_dmx_port(serialib *serial, const char *port) {
   return 0;
 }
 
-
 // 0 0 0 0 0 0 
 // HHHH aaaa bbbb c ccc d  ddd ... 0xE7
 // 0123 4567 8    12    16
 #pragma pack(push, 1) 
-struct RootPar6Packet {
+struct Packet {
   unsigned char SOM = 0x7E;
   unsigned char label = 0x06;
   uint16_t size;
-  unsigned char data[25] = {0};
+  unsigned char data[MAX_CHANNEL] = {0};
   unsigned char EOM = 0xE7;
 };
 #pragma pack(pop) 
 
 void send_dmx_data(serialib *serial, TitanTube *tubes, size_t num_tubes) {
-  RootPar6Packet packet;
+  Packet packet;
   size_t current_tube = 0;
   packet.data[0] = 0; // First dmx byte should always be 0 (RDM)
   for (size_t i = 1; i < num_tubes * 4; i+=4) {
@@ -39,7 +38,7 @@ void send_dmx_data(serialib *serial, TitanTube *tubes, size_t num_tubes) {
     printf("%zu : %d, %d, %d \n", current_tube, packet.data[i], packet.data[i+1], packet.data[i+2]);
     current_tube++;
   }
-  packet.size = num_tubes * 4;
+  packet.size = MAX_CHANNEL;
   printf("%d \n",  packet.size);
 
   uint8_t buff[sizeof(packet)];

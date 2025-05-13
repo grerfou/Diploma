@@ -4,7 +4,6 @@
 #include "dmx_controls.h"
 
 serialib serial;
-#define NUM_TUBES 1
 
 const char *serial_port = "/dev/ttyUSB0";
 
