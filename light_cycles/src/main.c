@@ -1,10 +1,17 @@
 #include "raylib.h"
 #include "titan_tube.h"
 #include <math.h>
-//#include <dmtx.h>
+#include "dmx_controls.h"
 
+serialib serial;
+#define NUM_TUBES 1
 
-#define NUM_TUBES 8
+/*
+// Déclaration des fonctions DMX
+int open_dmx_port(const char *port);
+void send_dmx_data(TitanTube *tubes, int num_tubes);
+void close_dmx_port();
+*/
 
 void clear_tube_cues(TitanTube *tubes, int count) {
     for (int i = 0; i < count; i++) {
@@ -32,14 +39,15 @@ int main(void) {
     // Configure premier cycle
     cycles[selected_cycle].setup(tubes, NUM_TUBES);
 
+    // Ouvre le port DMX
+    if (open_dmx_port(&serial, "/dev/cu.usbserial-EN409079") != 0) {
+        CloseWindow();
+        return -1;
+    }
+
     SetTargetFPS(60);
 
     while (!WindowShouldClose()) {
-        // Changement de cycle à l'espace
-        // 
-        //  Changement a faire --> Changement de cycles toutes les 5min ou via "la machine"
-        //
-        //
         if (IsKeyPressed(KEY_SPACE)) {
             selected_cycle = (selected_cycle + 1) % cycle_count;
             clear_tube_cues(tubes, NUM_TUBES);
@@ -59,6 +67,7 @@ int main(void) {
             update_tube(&tubes[i], local_time);
         }
 
+
         BeginDrawing();
         ClearBackground(RAYWHITE);
 
@@ -71,8 +80,12 @@ int main(void) {
         DrawText("Espace : changer de cycle", 10, 60, 18, DARKGRAY);
 
         EndDrawing();
+        // Envoie les données DMX
+        send_dmx_data(&serial, tubes, NUM_TUBES);
     }
 
+    // Ferme le port DMX à la fin
+    close_dmx_port(&serial);
     CloseWindow();
     return 0;
 }

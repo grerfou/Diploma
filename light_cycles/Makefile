@@ -1,5 +1,8 @@
-CC = gcc
-CFLAGS = -Wall -Wextra -std=c99 -O2
+
+
+CC = g++
+#CFLAGS = -Wall -Wextra -std=c99 -O2 -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/
+CFLAGS = -Wall -Wextra -O2 -std=c++11
 LDFLAGS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 
 SRC_DIR = src
@@ -25,4 +28,5 @@ run: all
 
 clean:
 	rm -rf $(OBJ_DIR) $(BIN)
+
 
