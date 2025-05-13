@@ -6,6 +6,8 @@
 serialib serial;
 #define NUM_TUBES 1
 
+const char *serial_port = "/dev/ttyUSB0";
+
 /*
 // Déclaration des fonctions DMX
 int open_dmx_port(const char *port);
@@ -40,7 +42,7 @@ int main(void) {
     cycles[selected_cycle].setup(tubes, NUM_TUBES);
 
     // Ouvre le port DMX
-    if (open_dmx_port(&serial, "/dev/cu.usbserial-EN409079") != 0) {
+    if (open_dmx_port(&serial, serial_port) != 0) {
         CloseWindow();
         return -1;
     }
