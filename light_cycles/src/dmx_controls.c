@@ -21,7 +21,7 @@ struct Packet {
   unsigned char SOM = 0x7E;
   unsigned char label = 0x06;
   uint16_t size;
-  unsigned char data[MAX_CHANNEL] = {0};
+  unsigned char data[MAX_CHANNEL] = {0};  // Recommended 25 by API
   unsigned char EOM = 0xE7;
 };
 #pragma pack(pop) 
