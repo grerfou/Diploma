@@ -1,105 +1,93 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <stdbool.h>
 #include "raylib.h"
+
 #include "text_loader.h"
 #include "bug_move.h"
-#include "bug_stub.h"
-#include "vhs_glitch.h"
-#include <stdlib.h>
-#include <stdio.h>
-#include <time.h>
-
-#define FONT_SIZE 30
+#include "bug_letters.h"
 
 typedef enum {
-    BUG_GLITCH,
-    BUG_STUB, // à remplacer plus tard
-    VHS_GLITCH,
+    BUG_MOVE,
+    BUG_LETTERS,
     BUG_COUNT
 } BugType;
 
 int main(void) {
-    InitWindow(1920, 1000, "Bug de texte");
+    InitWindow(1920, 1800, "Titan Sim - Change Bug with Space");
+
+    // Chargement de la police et texte
+    Font font = LoadFontEx("assets/LiberationMono.ttf", 18, NULL, 8200);
+    LoadTextFromFile("assets/text.txt");
+
+    float scrollOffset = 0.0f;
+    float deltaTime = 0.01f;
+
+    // Initialisation bugs
+    InitGlitchBug();
+    InitLettersBug();
+
+    BugType currentBug = BUG_MOVE;
+    bool spacePressedLastFrame = false;
+
+    // Choisir les mots à bugger selon le bug actif
+    ChooseWordToMove(30);     // Exemple : 30% de mots buggués pour move
+    ChooseWordsToScramble(50); // Exemple : 20% de mots buggués pour letters
+
     SetTargetFPS(60);
 
-    Font font = LoadFontEx("assets/LiberationMono.ttf", FONT_SIZE, NULL, 8200);
-    if (!font.texture.id) {
-        printf("Erreur : impossible de charger la police.\n");
-        return 1;
-    }
-
-    LoadTextFromFile("assets/text.txt");
-    srand(time(NULL));
-
-    float scrollOffset = 0;
-    float scrollSpeed = 10;
-
-    BugType currentBug = BUG_GLITCH;
-    float bugTimer = 0.0f;
-    float bugInterval = 1.0f;
-
-    InitGlitchBug();
-    InitStubBug(); 
-    InitVHSGlitch();
-
     while (!WindowShouldClose()) {
-        float delta = GetFrameTime();
+        deltaTime = GetFrameTime();
 
-        if (IsKeyPressed(KEY_SPACE)) {
+        // Gestion scroll texte simple
+        if (IsKeyDown(KEY_DOWN)) scrollOffset -= 100 * deltaTime;
+        if (IsKeyDown(KEY_UP)) scrollOffset += 100 * deltaTime;
+
+        // Passage au bug suivant à la touche espace (pas de répétition si maintenue)
+        bool spacePressed = IsKeyPressed(KEY_SPACE);
+        if (spacePressed && !spacePressedLastFrame) {
             currentBug = (currentBug + 1) % BUG_COUNT;
         }
+        spacePressedLastFrame = spacePressed;
 
-        scrollOffset -= scrollSpeed * delta;
-        if (scrollOffset < -lineCount * LINE_HEIGHT - 100)
-            scrollOffset = GetScreenHeight();
-
+        // Mise à jour selon bug actif
         switch (currentBug) {
-            case BUG_GLITCH:
-                bugTimer += delta;
-                if (bugTimer >= bugInterval) {
-                    //ChooseWordsToMove(20);
-                    ChooseLettersToMove(20);
-                    bugTimer = 0.0f;
-                }
-                UpdateGlitchBug(delta);
+            case BUG_MOVE:
+                UpdateGlitchBug(deltaTime);
+                //DrawGlitchBug(font, scrollOffset);
                 break;
-
-            case VHS_GLITCH: 
-                UpdateVHSGlitch(delta);
+            case BUG_LETTERS:
+                UpdateLettersBug(deltaTime);
                 break;
-
-            case BUG_STUB:
-                UpdateStubBug(delta);
+            default:
                 break;
-
-            default: break;
         }
 
         BeginDrawing();
         ClearBackground(BLACK);
 
+        // Dessiner selon bug actif
         switch (currentBug) {
-            case BUG_GLITCH:
-                NoteGlitch(font, scrollOffset);
+            case BUG_MOVE:
                 DrawGlitchBug(font, scrollOffset);
                 break;
-            
-            case VHS_GLITCH:
-                NoteVHS (font, scrollOffset);
-                DrawVHSGlitch(font, delta, scrollOffset);
+            case BUG_LETTERS:
+                DrawLettersBug(font, scrollOffset);
                 break;
-
-            case BUG_STUB:
-                NoteStub(font, scrollOffset);
-                DrawStubBug(font, delta, scrollOffset);
+            default:
                 break;
-
-            default: break;
         }
+
+        // Afficher info
+        DrawText("Press SPACE to switch bugs", 10, 10, 20, LIGHTGRAY);
+        DrawText(currentBug == BUG_MOVE ? "Current Bug: MOVE" : "Current Bug: LETTERS", 10, 40, 20, YELLOW);
 
         EndDrawing();
     }
 
     UnloadFont(font);
     CloseWindow();
+
     return 0;
 }
 

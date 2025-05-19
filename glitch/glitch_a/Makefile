@@ -1,21 +1,32 @@
+#CC = g++
 CC = gcc
-CFLAGS = -Wall -std=c99 -O2
+#CFLAGS = -Wall -Wextra -std=c99 -O2 -I/Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX.sdk/usr/include/c++/v1/
+CFLAGS = -Wall -Wextra -std=c99 -O2 -I raylib/include -L raylib/lib
+#LDFLAGS = -lraylib -framework OpenGL -framework Cocoa -framework IOKit -framework CoreVideo
 LDFLAGS = -lraylib -lm
 
 SRC_DIR = src
-ASSETS_DIR = assets
-BIN = main
+OBJ_DIR = obj
+BIN = titan_sim
 
-SRC = $(SRC_DIR)/main.c $(SRC_DIR)/bug_move.c $(SRC_DIR)/text_loader.c $(SRC_DIR)/bug_stub.c $(SRC_DIR)/vhs_glitch.c 
+SRCS = $(wildcard $(SRC_DIR)/*.c)
+OBJS = $(patsubst $(SRC_DIR)/%.c,$(OBJ_DIR)/%.o,$(SRCS))
+
+.PHONY: all clean run
 
 all: $(BIN)
 
-$(BIN): $(SRC)
+$(BIN): $(OBJS)
 	$(CC) $(CFLAGS) -o $@ $^ $(LDFLAGS)
 
-run: $(BIN)
+$(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
+	@mkdir -p $(OBJ_DIR)
+	$(CC) $(CFLAGS) -c $< -o $@
+
+run: all
 	./$(BIN)
 
 clean:
-	rm -f $(BIN)
+	rm -rf $(OBJ_DIR) $(BIN)
+
 
