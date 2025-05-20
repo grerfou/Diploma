@@ -1,3 +1,4 @@
+
 #include <cstdint>
 #include"serialib.h"
 #include "titan_tube.h"
@@ -21,7 +22,7 @@ struct Packet {
   unsigned char SOM = 0x7E;
   unsigned char label = 0x06;
   uint16_t size;
-  unsigned char data[MAX_CHANNEL] = {0};  // Recommended 25 by API
+  unsigned char data[MAX_CHANNEL] = {25};  // Recommended 25 by API
   unsigned char EOM = 0xE7;
 };
 #pragma pack(pop) 
@@ -56,4 +57,9 @@ void send_dmx_data(serialib *serial, TitanTube *tubes, size_t num_tubes) {
 void close_dmx_port(serialib *serial) {
   serial->closeDevice();
 }
+
+
+
+
+
 

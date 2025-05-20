@@ -95,8 +95,8 @@ int main(void)
     //SetConfigFlags(FLAG_FULLSCREEN_MODE);
 
     // Taille initiale (sera remplacée par la résolution réelle en plein écran)
-    const int screenWidth = 794;
-    const int screenHeight = 1123;
+    const int screenWidth = 1920;
+    const int screenHeight = 1080;
     InitWindow(screenWidth, screenHeight, "Affichage de texte Old Persian");
 
     // Récupère la résolution actuelle
@@ -127,7 +127,7 @@ int main(void)
     free(fontChars);
 
     // Texte Old Persian à afficher (encodé en UTF-8)
-    const char *oldPersianText = u8" 𐎢𐎴𐎣𐎠𐎭𐎙 𐎴𐎣𐎾     𐎠𐎩𐎢𐏃𐎭𐎠 𐎯𐎨𐎠𐎭𐎺 𐎲𐎡𐎨𐎼 𐎢𐎴𐎯    𐎤𐎺𐎭𐎠 𐎺𐎡𐎱𐎀 𐎴𐎡𐎺 𐎯𐎙𐎹𐎢 𐎠𐎭 𐎠𐎧𐎡𐎹     𐎧𐎴𐎡𐎠 𐎲𐎧𐎣𐎞𐎺 𐎠𐎦𐎰𐎴𐎄𐎱     𐎡𐎹𐎡𐎭𐎴 𐎮𐎠𐎡𐎶 𐎲𐎢𐎭𐎺 𐎭𐎠𐎴𐎱 𐎨𐎬𐎰𐎣𐎴𐎷      𐎢𐎡𐎢𐎸𐍈𐏐 𐎧𐎴𐎡𐎠𐎼𐎵 𐎠𐎴 𐎢𐎮𐎪𐎧𐎶𐎡𐎰 𐎣𐎦𐎾𐎭𐎠𐎴 𐎾𐎶𐎮𐎱𐏑 𐎠𐏃𐎤𐎖𐎡      𐏃𐎠𐎭𐎴𐎺 𐎦𐎡𐎬, 𐎰𐎥𐎠𐎪𐎨𐎠 𐎲𐎪𐎠𐎹 𐎨𐎶𐎮𐎨𐎦𐎾𐎡 𐎤𐏃 𐎭 𐏃𐎬𐎢𐎶𐎭𐎠𐎱 𐎨𐎡𐎽𐎷𐎼𐎢𐎩𐎠𐎺. ";
+    const char *oldPersianText = " 𐎢𐎴𐎣𐎠𐎭𐎙 𐎴𐎣𐎾     𐎠𐎩𐎢𐏃𐎭𐎠 𐎯𐎨𐎠𐎭𐎺 𐎲𐎡𐎨𐎼 𐎢𐎴𐎯    𐎤𐎺𐎭𐎠 𐎺𐎡𐎱𐎀 𐎴𐎡𐎺 𐎯𐎙𐎹𐎢 𐎠𐎭 𐎠𐎧𐎡𐎹     𐎧𐎴𐎡𐎠 𐎲𐎧𐎣𐎞𐎺 𐎠𐎦𐎰𐎴𐎄𐎱     𐎡𐎹𐎡𐎭𐎴 𐎮𐎠𐎡𐎶 𐎲𐎢𐎭𐎺 𐎭𐎠𐎴𐎱 𐎨𐎬𐎰𐎣𐎴𐎷      𐎢𐎡𐎢𐎸𐍈𐏐 𐎧𐎴𐎡𐎠𐎼𐎵 𐎠𐎴 𐎢𐎮𐎪𐎧𐎶𐎡𐎰 𐎣𐎦𐎾𐎭𐎠𐎴 𐎾𐎶𐎮𐎱𐏑 𐎠𐏃𐎤𐎖𐎡      𐏃𐎠𐎭𐎴𐎺 𐎦𐎡𐎬, 𐎰𐎥𐎠𐎪𐎨𐎠 𐎲𐎪𐎠𐎹 𐎨𐎶𐎮𐎨𐎦𐎾𐎡 𐎤𐏃 𐎭 𐏃𐎬𐎢𐎶𐎭𐎠𐎱 𐎨𐎡𐎽𐎷𐎼𐎢𐎩𐎠𐎺. ";
 
     SetTargetFPS(60);
     while (!WindowShouldClose())
