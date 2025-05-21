@@ -4,10 +4,14 @@
 #include <stdbool.h>
 #include <raylib.h>
 
-// Modifiables globalement
 extern int argileMaxLength;
-extern float argileTextAngle;
-extern int argileTextWidth;
+
+//extern float argileAnglePitch;
+//extern float argileAngleYaw;
+//extern float argileTextAngle;
+
+
+//extern int argileTextWidth;
 extern Vector2 argileTextPos;
 extern int argileFontSize;
 extern int argileLineSpacing;
