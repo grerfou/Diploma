@@ -1,3 +1,4 @@
+// paper.c
 #include "paper.h"
 #include <stdio.h>
 #include <stdlib.h>
@@ -6,40 +7,40 @@
 #include <raymath.h>
 
 // === Paramètres modifiables ===
-static int paperMaxLetters = 10; 
-static int paperFontSize = 20;
-static int paperLineSpacing = 0;
-static float paperTextWidth = 370.0f;
+int paperFontSize = 10;
+int paperLineSpacing = 2;
+float paperTextWidth = 250.0f;
 
-// Coins du plan (modifiable avec sliders)
-static Vector2 paperTopLeft = {100, 100};
-static Vector2 paperTopRight = {500, 100};
-static Vector2 paperBottomLeft = {100, 300};
-static Vector2 paperBottomRight = {500, 300};
+// Coins du plan (modifiable par sliders)
+Vector2 paperTopLeft = {100, 100};
+Vector2 paperTopRight = {500, 100};
+Vector2 paperBottomLeft = {100, 300};
+Vector2 paperBottomRight = {500, 300};
 
 // === Variables internes ===
 static char *paperText = NULL;
 static Font handwritingFont;
 static bool fontLoaded = false;
 
-// Animation lettre par lettre
+// Animation écriture lettre par lettre
 static int lettersDisplayed = 0;
 static float letterTimer = 0.0f;
-static const float LETTER_DELAY = 0.05f; // délai entre chaque lettre (s)
+static const float LETTER_DELAY = 0.05f;
 
 // Sliders
 static bool showSliders = true;
 static int activeSlider = -1;
 static const float sliderRadius = 8.0f;
 
-// === Fonctions internes ===
+// Défilement vertical du texte
+static float verticalScrollOffset = 0.0f;
 
-// Vérifie si la souris est sur un point donné (pour sliders)
+// ==== Fonctions ====
+
 static bool IsMouseOverPoint(Vector2 point, Vector2 mousePos, float radius) {
     return CheckCollisionPointCircle(mousePos, point, radius);
 }
 
-// Gère le dessin et interaction des sliders sur les coins du plan
 static void DrawAndHandleSliders(void) {
     Vector2 mousePos = GetMousePosition();
 
@@ -55,6 +56,7 @@ static void DrawAndHandleSliders(void) {
     }
 
     if (activeSlider != -1) {
+        Vector2 mousePos = GetMousePosition();
         switch (activeSlider) {
             case 0: paperTopLeft = mousePos; break;
             case 1: paperTopRight = mousePos; break;
@@ -71,17 +73,16 @@ static void DrawAndHandleSliders(void) {
     }
 }
 
-// Dessine le texte sur le plan, lettre par lettre, sans effets alpha/zoom
-static void DrawHandwritingTextOnPlane(Font font, const char *str, int maxLetters, int fontSize, int spacing, Color baseColor)
+static void DrawHandwritingTextOnPlaneScrolling(Font font, const char *str, int maxLetters, int fontSize, int spacing, Color baseColor)
 {
     int lineHeight = fontSize + spacing;
     int totalDrawn = 0;
     int index = 0;
 
+    // Découpage en lignes
     char lines[1024][512];
     int numLines = 0;
 
-    // Découpe le texte en lignes en fonction de la largeur du plan et maxLetters
     while (str[index] && totalDrawn < maxLetters && numLines < 1024)
     {
         char line[512] = {0};
@@ -106,12 +107,28 @@ static void DrawHandwritingTextOnPlane(Font font, const char *str, int maxLetter
         if (str[index] == '\n') index++;
     }
 
-    float totalHeight = lineHeight * numLines;
+    int totalTextHeight = lineHeight * numLines;
+
+    float planeHeight = Vector2Distance(paperTopLeft, paperBottomLeft);
+
+    // Scroll vers le haut si texte trop grand
+    if (totalTextHeight > planeHeight) {
+        verticalScrollOffset += (lineHeight * GetFrameTime() * 20); // ajuster vitesse scroll ici
+        if (verticalScrollOffset > (totalTextHeight - planeHeight))
+            verticalScrollOffset = totalTextHeight - planeHeight;
+    }
+    else {
+        verticalScrollOffset = 0;
+    }
+
     int letterIndex = 0;
 
     for (int i = 0; i < numLines; i++)
     {
-        float tY = (lineHeight * i) / totalHeight;
+        float tY = ((lineHeight * i) - verticalScrollOffset) / planeHeight;
+
+        if (tY < 0 || tY > 1) continue;
+
         Vector2 start = Vector2Lerp(paperTopLeft, paperBottomLeft, tY);
         Vector2 end = Vector2Lerp(paperTopRight, paperBottomRight, tY);
 
@@ -135,9 +152,9 @@ static void DrawHandwritingTextOnPlane(Font font, const char *str, int maxLetter
     }
 }
 
-// === Fonctions publiques ===
-
-bool Paper_Init(const char *filename) {
+// Init depuis fichier texte et police
+bool Paper_Init(const char *filename)
+{
     FILE *f = fopen(filename, "r");
     if (!f) return false;
 
@@ -155,26 +172,27 @@ bool Paper_Init(const char *filename) {
     paperText[size] = '\0';
     fclose(f);
 
-    if (FileExists("assets/Satisfy-Regular.ttf")) {
-        handwritingFont = LoadFont("assets/Satisfy-Regular.ttf");
+    if (FileExists("assets/LiberationMono.ttf")) {
+        handwritingFont = LoadFont("assets/LiberationMono.ttf");
         fontLoaded = true;
     } else {
         handwritingFont = GetFontDefault();
     }
 
-    // Reset animation variables
     lettersDisplayed = 0;
     letterTimer = 0.0f;
+    verticalScrollOffset = 0.0f;
 
     return true;
 }
 
-void Paper_Draw(void) {
+// Dessin principal
+void Paper_Draw(void)
+{
     ClearBackground(BLACK);
     if (!paperText) return;
 
-    float deltaTime = GetFrameTime();
-    letterTimer += deltaTime;
+    letterTimer += GetFrameTime();
 
     if (lettersDisplayed < (int)strlen(paperText) && letterTimer >= LETTER_DELAY) {
         letterTimer = 0.0f;
@@ -182,7 +200,8 @@ void Paper_Draw(void) {
     }
 
     Color textColor = (Color){ 255, 255, 255, 255 };
-    DrawHandwritingTextOnPlane(handwritingFont, paperText, lettersDisplayed, paperFontSize, paperLineSpacing, textColor);
+
+    DrawHandwritingTextOnPlaneScrolling(handwritingFont, paperText, lettersDisplayed, paperFontSize, paperLineSpacing, textColor);
 
     if (IsKeyPressed(KEY_TAB)) showSliders = !showSliders;
     DrawAndHandleSliders();
@@ -190,7 +209,9 @@ void Paper_Draw(void) {
     DrawText("Press TAB to toggle sliders", 10, 10, 20, GRAY);
 }
 
-void Paper_Close(void) {
+// Nettoyage
+void Paper_Close(void)
+{
     if (paperText) {
         free(paperText);
         paperText = NULL;
